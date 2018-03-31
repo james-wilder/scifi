@@ -46,7 +46,7 @@ func GetNextEvent(u *universe.Universe, now universe.UniversalTime) Event {
 					continue
 				}
 				for _, population2 := range lifeform2.Populations {
-					lifeformInformationLevel := float64(lifeform.Information) +
+					lifeformAbilityLevel := float64(lifeform.Information) +
 						float64(now-lifeform.StartYear)*techGrowthRate
 
 					distance := universe.GetDistance(population.Location, population2.Location)
@@ -55,7 +55,7 @@ func GetNextEvent(u *universe.Universe, now universe.UniversalTime) Event {
 					techLevelRequiredToDetect := distance * 100000
 
 					// detected when: detection > distance
-					timeToDetect := (techLevelRequiredToDetect - lifeformInformationLevel) / techGrowthRate
+					timeToDetect := (techLevelRequiredToDetect - lifeformAbilityLevel) / techGrowthRate
 					utimeToDetect := universe.UniversalTime(timeToDetect)
 
 					if utimeToDetect < 0 {
@@ -87,6 +87,48 @@ func GetNextEvent(u *universe.Universe, now universe.UniversalTime) Event {
 				At:   star.LifeformWillEvolveAt,
 				Type: LifeformStart,
 				Star: star,
+			}
+		}
+	}
+
+	// Colonization
+	for _, lifeform := range u.Lifeforms {
+		for _, population := range lifeform.Populations {
+			for _, star := range u.Stars {
+				pops := u.GetPopulations(star)
+				if len(pops) > 0 {
+					continue
+				}
+
+				// TODO: scale up with time
+				if population.Size < 1000000 {
+					continue
+				}
+
+				lifeformAbilityLevel := float64(lifeform.Transport) +
+					float64(now-lifeform.StartYear)*techGrowthRate
+
+				distance := universe.GetDistance(population.Location, star)
+
+				// TODO: what to do with the arbitrary constant?
+				techLevelRequiredToColonize := distance * 500000
+
+				timeToColonize := (techLevelRequiredToColonize - lifeformAbilityLevel) / techGrowthRate
+				utimeToColonize := universe.UniversalTime(timeToColonize)
+
+				if utimeToColonize < 0 {
+					utimeToColonize = 0
+				}
+
+				if now+utimeToColonize < e.At {
+					e = Event{
+						Type:     Colonization,
+						At:       now + utimeToColonize,
+						Distance: distance,
+						Lifeform: lifeform,
+						Star:     star,
+					}
+				}
 			}
 		}
 	}

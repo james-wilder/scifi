@@ -101,6 +101,7 @@ func (u *Universe) GenerateLifeform(star *Star, now UniversalTime) *Lifeform {
 		Populations: []*Population{
 			{
 				Location: star,
+				Size:     1000000000,
 			},
 		},
 		StartYear: now,
@@ -127,4 +128,11 @@ func (u *Universe) GetPopulations(star *Star) []*Population {
 		}
 	}
 	return populations
+}
+
+func (u *Universe) Colonize(star *Star, now UniversalTime, lifeform *Lifeform) {
+	lifeform.Populations = append(lifeform.Populations, &Population{
+		Location: star,
+		Size:     10000,
+	})
 }

@@ -46,6 +46,9 @@ func main() {
 		case event.LifeformStart:
 			lifeform := myUniverse.GenerateLifeform(e.Star, now)
 			fmt.Printf("%s have become sentient (Universe contains %d lifeforms)\n", lifeform.Name, len(myUniverse.Lifeforms))
+		case event.Colonization:
+			myUniverse.Colonize(e.Star, now, e.Lifeform)
+			fmt.Printf("%s has colonized new star system (now has %d populations)\n", e.Lifeform.Name, len(e.Lifeform.Populations))
 		}
 	}
 }
