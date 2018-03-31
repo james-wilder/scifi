@@ -1,9 +1,10 @@
 package names
 
 import (
-	"scifi/hmm"
 	"sort"
 	"strings"
+
+	"github.com/james-wilder/scifi/hmm"
 )
 
 var hmmModel *hmm.HmmModel

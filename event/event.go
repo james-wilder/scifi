@@ -1,8 +1,8 @@
 package event
 
 import (
-	"scifi/universe"
-	"scifi/util"
+	"github.com/james-wilder/scifi/universe"
+	"github.com/james-wilder/scifi/util"
 )
 
 type Type int32

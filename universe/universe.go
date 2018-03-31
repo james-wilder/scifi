@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"scifi/names"
+
+	"github.com/james-wilder/scifi/names"
 )
 
 type UniversalTime float64

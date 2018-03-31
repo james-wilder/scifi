@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"scifi/event"
-	"scifi/names"
-	"scifi/tech"
-	"scifi/universe"
+
+	"github.com/james-wilder/scifi/event"
+	"github.com/james-wilder/scifi/names"
+	"github.com/james-wilder/scifi/universe"
 )
 
 func main() {
@@ -14,7 +14,6 @@ func main() {
 	fmt.Printf("Building universe\n")
 
 	names.Init()
-	tech.Init()
 
 	myUniverse.GenerateStars(20)
 
