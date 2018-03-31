@@ -18,23 +18,23 @@ func main() {
 	myUniverse.GenerateStars(20)
 
 	fmt.Printf("Universe contains %d stars\n", len(myUniverse.Stars))
-	fmt.Printf("Universe contains %d lifeforms\n", len(myUniverse.Lifeforms))
 
-	var now = universe.HumanStartTime
+	var now = universe.UniversalTime(0)
 	e := event.Event{
 		At:   universe.UniversalTime(0),
 		Type: event.UniverseStart,
 	}
+	fmt.Printf("At %s the universe begins\n", now.String())
 
 	for {
-		fmt.Println("Now:", now.String())
-
 		e = event.GetNextEvent(&myUniverse, now)
 
-		fmt.Printf("Next event at %s (%s years)\n", e.At.String(), (e.At - now).String())
-		fmt.Println("Next event type", e.Type)
+		//fmt.Printf("Next event at %s (%s years)\n", e.At.String(), (e.At - now).String())
+		//fmt.Println("Next event type", e.Type)
 
 		now = e.At
+
+		fmt.Printf("At %s ", now.String())
 
 		if e.Type == event.UniverseEnd {
 			fmt.Println("Universe has ended at", now.String())
@@ -48,7 +48,7 @@ func main() {
 			e.Lifeform.Discovered = append(e.Lifeform.Discovered, e.Lifeform2.Name)
 		case event.LifeformStart:
 			lifeform := myUniverse.GenerateLifeform(e.Star, now)
-			fmt.Printf("New lifeform %s:\n", lifeform.Name)
+			fmt.Printf("%s have become sentient (Universe contains %d lifeforms)\n", lifeform.Name, len(myUniverse.Lifeforms))
 		}
 	}
 }

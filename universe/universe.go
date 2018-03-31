@@ -78,49 +78,14 @@ func getRandomLifeformStartTime() UniversalTime {
 	var time UniversalTime
 	// TODO: latest time?
 	for time < EarliestLifeformStartTime {
-		time = UniversalTime(rand.NormFloat64()*1000000000) + HumanStartTime
+		norm := rand.NormFloat64()
+		time = UniversalTime(norm*1000000000) + HumanStartTime
 	}
 	return time
 }
 
 func randomCoord() Coord {
 	return Coord(100*rand.Float32() - 0.5)
-}
-
-func (u *Universe) GenerateLifeforms_(n int) {
-	for i := 0; i < n; i++ {
-		var name string
-		var star *Star
-		if i == 0 {
-			name = "Humans"
-			star = u.Stars[0]
-		} else {
-			name = names.CreateName()
-			star = u.RandomStar()
-			for {
-				if len(u.GetPopulations(star)) == 0 {
-					break
-				}
-				star = u.RandomStar()
-			}
-		}
-		lifeform := Lifeform{
-			Name:         name,
-			Energy:       getRandomKardshevStartLevel(),
-			Information:  getRandomKardshevStartLevel(),
-			Intelligence: getRandomKardshevStartLevel(),
-			Material:     getRandomKardshevStartLevel(),
-			Social:       getRandomKardshevStartLevel(),
-			Transport:    getRandomKardshevStartLevel(),
-			Populations: []*Population{
-				{
-					Location: star,
-				},
-			},
-			StartYear: HumanStartTime,
-		}
-		u.Lifeforms = append(u.Lifeforms, &lifeform)
-	}
 }
 
 func (u *Universe) GenerateLifeform(star *Star, now UniversalTime) *Lifeform {

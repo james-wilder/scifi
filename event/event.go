@@ -50,7 +50,8 @@ func GetNextEvent(u *universe.Universe, now universe.UniversalTime) Event {
 
 					distance := universe.GetDistance(population.Location, population2.Location)
 
-					techLevelRequiredToDetect := distance * 1000000
+					// TODO: what to do with the arbitrary constant?
+					techLevelRequiredToDetect := distance * 100000
 
 					// detected when: detection > distance
 					timeToDetect := (techLevelRequiredToDetect - lifeformInformationLevel) / techGrowthRate
