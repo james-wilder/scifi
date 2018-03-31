@@ -1,7 +1,6 @@
 package names
 
 import (
-	"sort"
 	"strings"
 
 	"github.com/james-wilder/scifi/hmm"
@@ -20,12 +19,6 @@ func Init() {
 			}
 		}
 	}
-	sort.Strings(names)
-	//for _, name := range names {
-	//	fmt.Println(name)
-	//}
-	//fmt.Println("Name count:", len(names))
-
 	hmmModel = hmm.CreateHmmModel(names)
 }
 

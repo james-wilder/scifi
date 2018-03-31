@@ -29,12 +29,9 @@ func main() {
 	for {
 		e = event.GetNextEvent(&myUniverse, now)
 
-		//fmt.Printf("Next event at %s (%s years)\n", e.At.String(), (e.At - now).String())
-		//fmt.Println("Next event type", e.Type)
-
 		now = e.At
 
-		fmt.Printf("At %s ", now.String())
+		fmt.Printf("At %s years ", now.String())
 
 		if e.Type == event.UniverseEnd {
 			fmt.Println("Universe has ended at", now.String())
@@ -44,7 +41,7 @@ func main() {
 		// TODO: maybe move into event?
 		switch e.Type {
 		case event.LifeformDiscoversLifeform:
-			fmt.Printf("%s found %s at distance %f\n", e.Lifeform.Name, e.Lifeform2.Name, e.Distance)
+			fmt.Printf("%s found %s at %f light years\n", e.Lifeform.Name, e.Lifeform2.Name, e.Distance)
 			e.Lifeform.Discovered = append(e.Lifeform.Discovered, e.Lifeform2.Name)
 		case event.LifeformStart:
 			lifeform := myUniverse.GenerateLifeform(e.Star, now)
