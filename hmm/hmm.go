@@ -1,7 +1,6 @@
 package hmm
 
 import (
-	"fmt"
 	"math/rand"
 	"strings"
 )
@@ -55,7 +54,6 @@ func CreateHmmModel(source []string) *HmmModel {
 			runeCount++
 		}
 	}
-	fmt.Println(model.twoLetterTotals)
 	return &model
 }
 

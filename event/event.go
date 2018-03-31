@@ -26,6 +26,7 @@ type Event struct {
 	Lifeform  *universe.Lifeform
 	Lifeform2 *universe.Lifeform
 	Star      *universe.Star
+	Distance  float64
 }
 
 func GetNextEvent(u *universe.Universe, now universe.UniversalTime) Event {
@@ -67,6 +68,7 @@ func GetNextEvent(u *universe.Universe, now universe.UniversalTime) Event {
 							At:        now + utimeToDetect,
 							Lifeform:  lifeform,
 							Lifeform2: lifeform2,
+							Distance:  distance,
 						}
 					}
 				}

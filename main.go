@@ -44,7 +44,7 @@ func main() {
 		// TODO: maybe move into event?
 		switch e.Type {
 		case event.LifeformDiscoversLifeform:
-			fmt.Printf("%s found %s:\n", e.Lifeform.Name, e.Lifeform2.Name)
+			fmt.Printf("%s found %s at distance %f\n", e.Lifeform.Name, e.Lifeform2.Name, e.Distance)
 			e.Lifeform.Discovered = append(e.Lifeform.Discovered, e.Lifeform2.Name)
 		case event.LifeformStart:
 			lifeform := myUniverse.GenerateLifeform(e.Star, now)
