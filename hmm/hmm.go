@@ -7,6 +7,7 @@ import (
 
 type HmmModel struct {
 	rand              *rand.Rand
+	randomSource      rand.Source
 	firstLetterCounts map[string]int
 	twoLetterTotals   map[string]map[string]int
 	threeLetterTotals map[string]map[string]int
@@ -15,8 +16,8 @@ type HmmModel struct {
 func CreateHmmModel(source []string) *HmmModel {
 	var model HmmModel
 
-	randomSource := rand.NewSource(42)
-	model.rand = rand.New(randomSource)
+	model.randomSource = rand.NewSource(42)
+	model.rand = rand.New(model.randomSource)
 	model.rand.Seed(42)
 
 	model.firstLetterCounts = make(map[string]int)
@@ -91,16 +92,16 @@ func (model *HmmModel) generateAttempt() string {
 	generated := ""
 	lastLetter := ""
 
-	newLetter := pickOne(model.firstLetterCounts)
+	newLetter := model.pickOne(model.firstLetterCounts)
 	generated = generated + strings.ToUpper(newLetter)
 	letterBeforeLast := newLetter
 
-	newLetter = pickOne(model.twoLetterTotals[letterBeforeLast])
+	newLetter = model.pickOne(model.twoLetterTotals[letterBeforeLast])
 	generated = generated + newLetter
 	lastLetter = newLetter
 
 	for lastLetter != "." {
-		newLetter = pickOne(model.threeLetterTotals[letterBeforeLast+lastLetter])
+		newLetter = model.pickOne(model.threeLetterTotals[letterBeforeLast+lastLetter])
 		if newLetter != "." {
 			if lastLetter == " " || lastLetter == "'" {
 				generated = generated + strings.ToUpper(newLetter)
@@ -114,7 +115,7 @@ func (model *HmmModel) generateAttempt() string {
 	return generated
 }
 
-func pickOne(counts map[string]int) string {
+func (model *HmmModel) pickOne(counts map[string]int) string {
 	total := 0
 	var keys []string
 	for key := range counts {
@@ -122,7 +123,7 @@ func pickOne(counts map[string]int) string {
 		total += counts[key]
 	}
 
-	pick := rand.Intn(total)
+	pick := model.rand.Intn(total)
 	runningTotal := 0
 	for _, key := range keys {
 		runningTotal = runningTotal + counts[key]

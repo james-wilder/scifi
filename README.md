@@ -8,17 +8,19 @@
 * stars
 * lifeforms
 * spawn lifeforms at random times
+* colonization
+* make sure names are unique
 
 
 ## TODO
 
-* colonization
+* same repeatable random seed every time
+* logarithmic population
 * send fleet
 * display
 * make it a game
 * draw 3d map, UI
 * planets, moons, habitats
-* same repeatable random seed every time
 * hiding from detection
 * reactions to contact:
   * peaceful
@@ -33,6 +35,7 @@
 * leave/discover artifact/weapon/device in other/your system
 * current status report:
   * population, tech level (with examples)
+* breakup of empire into two
 
 
 

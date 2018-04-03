@@ -90,6 +90,10 @@ func randomCoord() Coord {
 
 func (u *Universe) GenerateLifeform(star *Star, now UniversalTime) *Lifeform {
 	name := names.CreateName()
+	_, found := u.GetLifeformByName(name)
+	for found {
+		_, found = u.GetLifeformByName(name)
+	}
 	lifeform := Lifeform{
 		Name:         name,
 		Energy:       getRandomKardshevStartLevel(),
@@ -135,4 +139,13 @@ func (u *Universe) Colonize(star *Star, now UniversalTime, lifeform *Lifeform) {
 		Location: star,
 		Size:     10000,
 	})
+}
+
+func (u *Universe) GetLifeformByName(name string) (*Lifeform, bool) {
+	for _, lifeform := range u.Lifeforms {
+		if lifeform.Name == name {
+			return lifeform, true
+		}
+	}
+	return nil, false
 }

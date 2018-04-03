@@ -15,7 +15,11 @@ func main() {
 
 	names.Init()
 
-	myUniverse.GenerateStars(20)
+	// 20 tiny
+	// 100 medium
+	// 200 large
+	// 1000 extra large
+	myUniverse.GenerateStars(50)
 
 	fmt.Printf("Universe contains %d stars\n", len(myUniverse.Stars))
 
