@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/james-wilder/scifi/event"
 	"github.com/james-wilder/scifi/names"
 	"github.com/james-wilder/scifi/universe"
