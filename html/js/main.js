@@ -33,11 +33,15 @@ function createGalaxy() {
     y = y / 1000;
 
     if ((x > -1) && (x < 1) && (y > -1) && (y < 1)) {
+      var r = Math.floor(Math.random() * 256);
+      var g = Math.floor(Math.random() * 256);
+      var b = Math.floor(Math.random() * 256);
       var star = {
         x: x,
         y: y,
         lifeformWillEvolveAt: Math.random() * Math.random() * 100000000000,
         population: 0,
+        lifeformColor: 'rgb(' + r + ',' + g + ',' + b + ')',
       };
       stars.push(star);
     }
@@ -86,20 +90,29 @@ function getNextEvent(galaxyState) {
     at: galaxyEnd,
     type: "end"
   };
+
+  // new lifeforms
   for (var i = 0; i < stars.length; i++) {
     var star = stars[i];
-    if (getPopulations(galaxyState, star) == 0) {
+    if (getPopulationsAt(galaxyState, star).length == 0) {
       if (star.lifeformWillEvolveAt >= galaxyState.now) {
         if (star.lifeformWillEvolveAt < nextEvent.at) {
           nextEvent = {
             at: star.lifeformWillEvolveAt,
             type: "new_lifeform",
             star: star,
-            lifeform: 'at_' + star.lifeformWillEvolveAt
+            lifeform: {
+              name: 'at_' + star.lifeformWillEvolveAt,  // TODO: name them
+              color: star.lifeformColor
+            }
           };
         }
       }
     }
+  }
+
+  // colonization
+  for (var i = 0; i < galaxyState.populations.length; i++) {
   }
 
   return nextEvent;
@@ -111,7 +124,8 @@ function getGalaxyState(events, at) {
   var galaxyState = {
     now: 0,
     events: [],
-    populations: []
+    populations: [],
+    lifeforms: []
   }
 
   var event = {
@@ -135,6 +149,8 @@ function getGalaxyState(events, at) {
         size: 1
       };
       galaxyState.populations.push(population);
+
+      galaxyState.lifeforms.push(event.lifeform);
     }
 
     if (event.type == "end") {
@@ -147,15 +163,26 @@ function getGalaxyState(events, at) {
   return galaxyState;
 }
 
-function getPopulations(galaxyState, star) {
-  var total = 0;
+function getPopulationsAt(galaxyState, location) {
+  var populations = [];
   for (var i = 0; i < galaxyState.populations.length; i++) {
     var population = galaxyState.populations[i];
-    if (population.location == star) {
-      total= total + population.size;
+    if (population.location == location) {
+      populations.push(population);
     }
   }
-  return total;
+  return populations;
+}
+
+function getLifeformPopulations(galaxyState, lifeform) {
+  var populations = [];
+  for (var i = 0; i < galaxyState.populations.length; i++) {
+    var population = galaxyState.populations[i];
+    if (population.lifeform == lifeform) {
+      populations.push(population);
+    }
+  }
+  return populations;
 }
 
 function drawMap() {
@@ -178,13 +205,41 @@ function drawMap() {
 
     c.style.webkitFilter = "blur(1px)";
     ctx.beginPath();
+    
     // TODO: make suns change size as time passes
     ctx.arc(x, y, 12, 0, 2.0 * Math.PI)
+
     // TODO: make suns change colour as time passes
     ctx.fillStyle = "rgb(255,255,128)";
-    if (getPopulations(galaxyState, star) > 0) {
-      ctx.fillStyle = "rgb(0,128,0)";
+    
+    // TODO: different color for each lifeform
+    var populations = getPopulationsAt(galaxyState, star);
+    if (populations.length == 0) {
+      ctx.fill();
     }
+  }
+
+  for (var i = 0; i < stars.length; i++) {
+    var star = stars[i];
+
+    var x = width / 2 * (star.x + 1);
+    var y = height / 2 * (star.y + 1);
+
+    c.style.webkitFilter = "blur(1px)";
+    ctx.beginPath();
+    
+    // TODO: make suns change size as time passes
+    ctx.arc(x, y, 12, 0, 2.0 * Math.PI)
+
+    // TODO: make suns change colour as time passes
+    ctx.fillStyle = "rgb(255,255,128)";
+    
+    // TODO: different color for each lifeform
+    var populations = getPopulationsAt(galaxyState, star);
+    if (populations.length > 0) {
+      ctx.fillStyle = populations[0].lifeform.color;
+    }
+    
     ctx.fill();
   }
 }
