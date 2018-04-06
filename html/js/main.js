@@ -1,4 +1,9 @@
+var starCount = 1000;
+var armCount = 6;
+
 var stars = [];
+
+var events = [];
 
 function log(s) {
   console.log(s);
@@ -7,10 +12,7 @@ function log(s) {
 function createGalaxy() {
   log("createGalaxy");
 
-  var armCount = 6;
-
-  //for (var i = 0; i < 1000; i++) {
-  while (stars.length < 1000) {
+  while (stars.length < starCount) {
     var arm = Math.floor(Math.random() * (armCount + 1));
     var d = Math.random();
     var a = (arm / armCount) * 2.0 * Math.PI + d * 2;
@@ -32,11 +34,64 @@ function createGalaxy() {
     if ((x > -1) && (x < 1) && (y > -1) && (y < 1)) {
       var star = {
         x: x,
-        y: y
+        y: y,
+        lifeformWillEvolveAt: Math.random() * Math.random() * 100000000000,
+        population: 0
       };
       stars.push(star);
     }
   }
+}
+
+function createEventList() {
+  log("createEventList");
+
+  var event = {
+    at: 0,
+    type: "start"
+  }
+  events.push(event);
+  while (true) {
+    var event = getNextEvent(event.at);
+    events.push(event);
+
+    if (event.type == "new_lifeform") {
+      event.star.population = 1;
+    }
+
+    if (event.type == "end") {
+      break;
+    }
+  }
+
+  log("createEventList finished");
+}
+
+function getNextEvent(now) {
+  var nextEvent = {
+    at: 10000000000, // 10 billion
+    type: "end"
+  };
+  for (var i = 0; i < stars.length; i++) {
+    var star = stars[i];
+    if (getPopulations(star) == 0) {
+      if (star.lifeformWillEvolveAt >= now) {
+        if (star.lifeformWillEvolveAt < nextEvent.at) {
+          nextEvent = {
+            at: star.lifeformWillEvolveAt,
+            type: "new_lifeform",
+            star: star
+          };
+        }
+      }
+    }
+  }
+
+  return nextEvent;
+}
+
+function getPopulations(star) {
+  return star.population;
 }
 
 function drawMap() {
@@ -47,7 +102,7 @@ function drawMap() {
   var width = c.width;
   var height = c.height;
 
-  for (var i = 0; i < 1000; i++) {
+  for (var i = 0; i < stars.length; i++) {
     var star = stars[i];
 
     var x = width / 2 * (star.x + 1);
@@ -71,6 +126,16 @@ function resizeMap() {
   drawMap();
 }
 
+function outputEventsToUI() {
+  log("outputEventsToUI");
+
+  for (var i = 0; i < events.length; i++) {
+    var event = events[i];
+    log(event.at + ": " + event.type);
+    $('#event_list').append('<div>' + event.at + ": " + event.type + '</div>');
+  }
+}
+
 $('#do_it').on('click', function(event) {
   $('#do_it').toggleClass('btn-primary');
 });
@@ -81,5 +146,7 @@ $('#map_size').on('input change',function(event){
 
 $(window).on('load', function(event) {
   createGalaxy();
+  createEventList();
+  outputEventsToUI();
   resizeMap();
 });
