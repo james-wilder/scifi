@@ -1,5 +1,5 @@
 var galaxyEnd = 10000000000; // 10 billion
-var starCount = 1000;
+var starCount = 500;
 var armCount = 6;
 var timelineAt = 0;
 
@@ -53,27 +53,23 @@ function createEventList() {
 
   var galaxyState = {
     now: 0,
-    events: [],
-    populations: []
+    populations: [],
+    lifeforms: [],
   }
 
   var event = {
     at: 0,
     type: "start"
   }
-  galaxyState.events.push(event);
+  events.push(event);
   while (true) {
     var event = getNextEvent(galaxyState);
-    galaxyState.events.push(event);
+    log(event.type);
+    events.push(event);
 
-    if (event.type == "new_lifeform") {
-      population = {
-        lifeform: event.lifeform,
-        location: event.star,
-        size: 1
-      };
-      galaxyState.populations.push(population);
-    }
+    processEvent(galaxyState, event);
+
+    galaxyState.now = event.at;
 
     if (event.type == "end") {
       break;
@@ -81,11 +77,10 @@ function createEventList() {
   }
 
   log("createEventList finished");
-
-  return galaxyState.events;
 }
 
 function getNextEvent(galaxyState) {
+  log("getNextEvent");
   var nextEvent = {
     at: galaxyEnd,
     type: "end"
@@ -94,8 +89,8 @@ function getNextEvent(galaxyState) {
   // new lifeforms
   for (var i = 0; i < stars.length; i++) {
     var star = stars[i];
-    if (getPopulationsAt(galaxyState, star).length == 0) {
-      if (star.lifeformWillEvolveAt >= galaxyState.now) {
+    if (star.lifeformWillEvolveAt >= galaxyState.now) {
+      if (getPopulationsAt(galaxyState, star).length == 0) {
         if (star.lifeformWillEvolveAt < nextEvent.at) {
           nextEvent = {
             at: star.lifeformWillEvolveAt,
@@ -104,7 +99,7 @@ function getNextEvent(galaxyState) {
             lifeform: {
               name: 'at_' + star.lifeformWillEvolveAt,  // TODO: name them
               color: star.lifeformColor
-            }
+            },
           };
         }
       }
@@ -112,55 +107,101 @@ function getNextEvent(galaxyState) {
   }
 
   // colonization
-  for (var i = 0; i < galaxyState.populations.length; i++) {
+  for (var s = 0; s < stars.length; s++) {
+    var star = stars[s];
+    if (getPopulationsAt(galaxyState, star).length > 0) {
+      continue;
+    }
+
+    for (var l = 0; l < galaxyState.lifeforms.length; l++) {
+      var lifeform = galaxyState.lifeforms[l];
+
+      // TODO: variability
+      var techLevelRate = 0.00001;
+      var colonizeAbility = 1 + galaxyState.now * techLevelRate;
+
+      var populations = getLifeformPopulations(galaxyState, lifeform);
+      for (var p = 0; p < populations.length; p++) {
+        var population = populations[p];
+        if (population.size < 10) {
+          continue;
+        }
+
+        var distance = getDistanceSquared(population.location, star);
+        var techLevelToColonize = distance * 10000000;
+
+        var timeToColonize = (techLevelToColonize - colonizeAbility) / techLevelRate;
+
+        if (galaxyState.now + timeToColonize < nextEvent.at) {
+          nextEvent = {
+            at: galaxyState.now + timeToColonize,
+            type: "colonization",
+            star: star,
+            lifeform: lifeform,
+          };
+        }
+      }
+    }
   }
 
   return nextEvent;
 }
 
+function getDistanceSquared(loc1, loc2) {
+  var xd = loc1.x - loc2.x;
+  var yd = loc1.y - loc2.y;
+  return xd * xd + yd * yd;
+}
+
 function getGalaxyState(events, at) {
-  log("createEventList");
+  log("getGalaxyState");
 
   var galaxyState = {
     now: 0,
-    events: [],
     populations: [],
     lifeforms: []
   }
 
-  var event = {
-    at: 0,
-    type: "start"
-  }
-  galaxyState.events.push(event);
-  while (true) {
-    var event = getNextEvent(galaxyState);
-    galaxyState.events.push(event);
+  for (var i = 0; i < events.length; i++) {
+    var event = events[i];
 
     if (event.at > at) {
       galaxyState.now = at;
       break;
     }
 
-    if (event.type == "new_lifeform") {
-      population = {
-        lifeform: event.lifeform,
-        location: event.star,
-        size: 1
-      };
-      galaxyState.populations.push(population);
-
-      galaxyState.lifeforms.push(event.lifeform);
-    }
+    processEvent(galaxyState, event);
 
     if (event.type == "end") {
       break;
     }
   }
 
-  log("createEventList finished");
+  log("getGalaxyState finished");
 
   return galaxyState;
+}
+
+function processEvent(galaxyState, event) {
+  if (event.type == "new_lifeform") {
+    population = {
+      lifeform: event.lifeform,
+      location: event.star,
+      size: 10,
+    };
+    galaxyState.populations.push(population);
+
+    galaxyState.lifeforms.push(event.lifeform);
+  }
+
+  if (event.type == "colonization") {
+    population = {
+      lifeform: event.lifeform,
+      location: event.star,
+      size: 1,
+    };
+    galaxyState.populations.push(population);
+  }
 }
 
 function getPopulationsAt(galaxyState, location) {
@@ -316,7 +357,7 @@ $('#map_size').on('input change',function(event){
 
 $(window).on('load', function(event) {
   createGalaxy();
-  events = createEventList();
+  createEventList();
   outputEventsToUI();
   resizeMap();
   setTimeline(0);
