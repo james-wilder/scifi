@@ -4,17 +4,18 @@
 
 * star poisitioning
 * star drawing
+* event: spawn lifeforms
+* UI: event list
 
 ## TODO
 
-event: spawn lifeforms
-UI: show lifeforms on map
-time/event logic: get state at time
-UI: draw timeline, click updates map
-UI: event list, click moves timeline
-event: colonize
-time/event logic: population increase
-UI: show populations on timeline
+* UI: show lifeforms on map
+* time/event logic: get state at time
+* UI: draw timeline, click updates map
+* UI: event list, click moves timeline
+* event: colonize
+* time/event logic: population increase
+* UI: show populations on timeline
 
 
 ## DONE (in Go)

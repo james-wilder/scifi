@@ -1,8 +1,9 @@
+var galaxyEnd = 10000000000; // 10 billion
 var starCount = 1000;
 var armCount = 6;
+var timelineAt = 0;
 
 var stars = [];
-
 var events = [];
 
 function log(s) {
@@ -36,7 +37,7 @@ function createGalaxy() {
         x: x,
         y: y,
         lifeformWillEvolveAt: Math.random() * Math.random() * 100000000000,
-        population: 0
+        population: 0,
       };
       stars.push(star);
     }
@@ -46,17 +47,28 @@ function createGalaxy() {
 function createEventList() {
   log("createEventList");
 
+  var galaxyState = {
+    now: 0,
+    events: [],
+    populations: []
+  }
+
   var event = {
     at: 0,
     type: "start"
   }
-  events.push(event);
+  galaxyState.events.push(event);
   while (true) {
-    var event = getNextEvent(event.at);
-    events.push(event);
+    var event = getNextEvent(galaxyState);
+    galaxyState.events.push(event);
 
     if (event.type == "new_lifeform") {
-      event.star.population = 1;
+      population = {
+        lifeform: event.lifeform,
+        location: event.star,
+        size: 1
+      };
+      galaxyState.populations.push(population);
     }
 
     if (event.type == "end") {
@@ -65,22 +77,25 @@ function createEventList() {
   }
 
   log("createEventList finished");
+
+  return galaxyState.events;
 }
 
-function getNextEvent(now) {
+function getNextEvent(galaxyState) {
   var nextEvent = {
-    at: 10000000000, // 10 billion
+    at: galaxyEnd,
     type: "end"
   };
   for (var i = 0; i < stars.length; i++) {
     var star = stars[i];
-    if (getPopulations(star) == 0) {
-      if (star.lifeformWillEvolveAt >= now) {
+    if (getPopulations(galaxyState, star) == 0) {
+      if (star.lifeformWillEvolveAt >= galaxyState.now) {
         if (star.lifeformWillEvolveAt < nextEvent.at) {
           nextEvent = {
             at: star.lifeformWillEvolveAt,
             type: "new_lifeform",
-            star: star
+            star: star,
+            lifeform: 'at_' + star.lifeformWillEvolveAt
           };
         }
       }
@@ -90,14 +105,67 @@ function getNextEvent(now) {
   return nextEvent;
 }
 
-function getPopulations(star) {
-  return star.population;
+function getGalaxyState(events, at) {
+  log("createEventList");
+
+  var galaxyState = {
+    now: 0,
+    events: [],
+    populations: []
+  }
+
+  var event = {
+    at: 0,
+    type: "start"
+  }
+  galaxyState.events.push(event);
+  while (true) {
+    var event = getNextEvent(galaxyState);
+    galaxyState.events.push(event);
+
+    if (event.at > at) {
+      galaxyState.now = at;
+      break;
+    }
+
+    if (event.type == "new_lifeform") {
+      population = {
+        lifeform: event.lifeform,
+        location: event.star,
+        size: 1
+      };
+      galaxyState.populations.push(population);
+    }
+
+    if (event.type == "end") {
+      break;
+    }
+  }
+
+  log("createEventList finished");
+
+  return galaxyState;
+}
+
+function getPopulations(galaxyState, star) {
+  var total = 0;
+  for (var i = 0; i < galaxyState.populations.length; i++) {
+    var population = galaxyState.populations[i];
+    if (population.location == star) {
+      total= total + population.size;
+    }
+  }
+  return total;
 }
 
 function drawMap() {
   log("drawMap");
+
+  var galaxyState = getGalaxyState(events, timelineAt);
+
   var c = document.getElementById("universe");
   var ctx = c.getContext("2d");
+  ctx.clearRect(0, 0, c.width, c.height);
 
   var width = c.width;
   var height = c.height;
@@ -114,6 +182,9 @@ function drawMap() {
     ctx.arc(x, y, 12, 0, 2.0 * Math.PI)
     // TODO: make suns change colour as time passes
     ctx.fillStyle = "rgb(255,255,128)";
+    if (getPopulations(galaxyState, star) > 0) {
+      ctx.fillStyle = "rgb(0,128,0)";
+    }
     ctx.fill();
   }
 }
@@ -132,12 +203,56 @@ function outputEventsToUI() {
   for (var i = 0; i < events.length; i++) {
     var event = events[i];
     log(event.at + ": " + event.type);
-    $('#event_list').append('<div>' + event.at + ": " + event.type + '</div>');
+    $('#event_list').append('<div class="event" data-at="' + event.at + '">' 
+      + event.at + ': ' + event.type + '</div>');
   }
+  $('.event').on('click', function(event) {
+  	setTimeline($(this).data('at'));
+  });
+}
+
+function setTimeline(now) {
+  log(now);
+
+  var c = document.getElementById("timeline");
+  var ctx = c.getContext("2d");
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  for (var i = 0; i < events.length; i++) {
+    markTimeline(events[i].at, '#800');
+  }
+  markTimeline(now, 'white');
+
+  timelineAt = now;
+
+  drawMap();
+}
+
+function markTimeline(at, color) {
+  var c = document.getElementById("timeline");
+  var ctx = c.getContext("2d");
+
+  var width = c.width;
+  var height = c.height;
+
+  var x = width * at / galaxyEnd;
+
+  ctx.beginPath();
+  ctx.moveTo(x, 0);
+  ctx.lineTo(x, height);
+  ctx.strokeStyle = color;
+  ctx.stroke();
 }
 
 $('#do_it').on('click', function(event) {
   $('#do_it').toggleClass('btn-primary');
+});
+
+$('#timeline').on('click', function(event) {
+  var c = document.getElementById("timeline");
+  var ctx = c.getContext("2d");
+
+  setTimeline(galaxyEnd * event.pageX / c.width);
 });
 
 $('#map_size').on('input change',function(event){
@@ -146,7 +261,8 @@ $('#map_size').on('input change',function(event){
 
 $(window).on('load', function(event) {
   createGalaxy();
-  createEventList();
+  events = createEventList();
   outputEventsToUI();
   resizeMap();
+  setTimeline(0);
 });
