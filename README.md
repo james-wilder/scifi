@@ -4,10 +4,10 @@
 * name generation
 * star positioning
 * star drawing
+* map scroll, zoom
 
 ## TODO
 
-* map scroll, zoom
 * event loop, start and end of galaxy
 * event: spawn lifeforms
 * next event logic
