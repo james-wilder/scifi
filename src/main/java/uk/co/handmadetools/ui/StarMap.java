@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 public class StarMap extends JPanel {
@@ -55,10 +56,21 @@ public class StarMap extends JPanel {
                     opacity = 255;
                     colorChange = 127;
                 } else if (glow) {
-                    opacity = (int) (255.0f / ((100.0f + d2) / 100.0f));
-                    colorChange = (int) (127.0f * d / ((float)STAR_SIZE * (float)STAR_SIZE / 4.0f));
+                    float fade = 0.01f * ((STAR_SIZE / 2.0f) / (1.0f + d - STAR_SIZE / 20.0f) - 0.4f);
+                    if (fade < 0) {
+                        fade = 0;
+//                        System.out.println("A");
+                    }
+                    if (fade > 1) {
+                        fade = 1;
+//                        System.out.println("...");
+                    }
+//                    System.out.println(fade);
+//                    fade = 1 - fade;
+                    opacity = (int) (fade * 255);
+                    colorChange = (int) (100.0f * fade * fade * fade * fade);
                 }
-                g.setColor(new Color(255, 128 + colorChange, colorChange, opacity));
+                g.setColor(new Color(200, 100 + colorChange, colorChange, opacity));
 
                 g.drawRect(x, y, 1, 1);
             }
@@ -81,6 +93,11 @@ public class StarMap extends JPanel {
     }
 
     private void drawStars(Graphics g, BufferedImage image) {
+        int size = (int) (0.3f * (float)STAR_SIZE / Math.log(0.1 + scale));
+        int halfSize = size / 2;
+
+        Image scaled = image.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+
         int midX = getWidth() / 2;
         int midY= getHeight() / 2;
         for (Star star : galaxy.stars) {
@@ -93,10 +110,7 @@ public class StarMap extends JPanel {
             x = x / scale;
             y = y / scale;
 
-            int size = (int) (0.3f * (float)STAR_SIZE / Math.log(0.1 + scale));
-            int halfSize = size / 2;
-
-            g.drawImage(image, (int)x - halfSize + midX, (int)y -halfSize + midY, size, size, this);
+            g.drawImage(scaled, (int)x - halfSize + midX, (int)y -halfSize + midY, size, size, this);
         }
     }
 
