@@ -1,14 +1,17 @@
 # scifi
 
-## DONE (in Javascript)
-
-* star poisitioning
+## DONE
+* name generation
+* star positioning
 * star drawing
-* event: spawn lifeforms
-* UI: event list
 
 ## TODO
 
+* map scroll, zoom
+* event loop, start and end of galaxy
+* event: spawn lifeforms
+* next event logic
+* UI: event list
 * UI: show lifeforms on map
 * time/event logic: get state at time
 * UI: draw timeline, click updates map
@@ -16,21 +19,7 @@
 * event: colonize
 * time/event logic: population increase
 * UI: show populations on timeline
-
-
-## DONE (in Go)
-
-* event loop
-* next event logic
-* universe
-* stars
-* lifeforms
-* spawn lifeforms at random times
-* colonization
 * make sure names are unique
-
-
-## TODO
 
 * same repeatable random seed every time
 * logarithmic population
@@ -71,7 +60,7 @@
   * civ
   * europa universalis
   * stellaris
-  * everything
+  * everything (the game)
   * dwarf fortress
 * options
   * set-up race at start +/- to various stats, aggression level
