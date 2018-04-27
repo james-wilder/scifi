@@ -71,6 +71,10 @@ public class Galaxy {
             Star star = new Star();
             star.x = x;
             star.y = y;
+            star.lifeWillEvolveAt = 0;
+            while (star.lifeWillEvolveAt <= 0) {
+                star.lifeWillEvolveAt = (float) (random.nextGaussian() * 1000000000.0f + 10000000000.0f);
+            }
 
             stars.add(star);
         }
