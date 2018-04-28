@@ -93,7 +93,7 @@ public class StarMap extends JPanel {
     }
 
     private void drawStars(Graphics g, BufferedImage image) {
-        int size = (int) (0.3f * (float)STAR_SIZE / Math.log(0.8f + scale));
+        int size = (int) (0.4f * (float)STAR_SIZE / Math.log(1.2f + scale));
         int halfSize = size / 2;
 
         Image scaled = image.getScaledInstance(size, size, Image.SCALE_SMOOTH);
@@ -149,7 +149,7 @@ public class StarMap extends JPanel {
             return;
         }
 
-        if (scale * zoom < 0.5) {
+        if (scale * zoom < 0.25) {
             return;
         }
 
