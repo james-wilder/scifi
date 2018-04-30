@@ -14,10 +14,6 @@ public class Main {
         System.out.println("Hello worlds");
 
         NameGenerator nameGenerator = new NameGenerator();
-        for (int i = 0; i < 20; i++) {
-            System.out.println(nameGenerator.newName());
-        }
-
         Galaxy galaxy = new Galaxy(nameGenerator);
         Window window = new Window(galaxy);
 

@@ -128,4 +128,10 @@ public class Galaxy {
         lifeformColors.put(name, color);
         return color;
     }
+
+    public float getDistance(Star star, Star star2) {
+        float dx = star.x - star2.x;
+        float dy = star.y - star2.y;
+        return (float)Math.sqrt(dx * dx + dy * dy);
+    }
 }

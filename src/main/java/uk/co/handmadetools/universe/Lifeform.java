@@ -6,5 +6,7 @@ public class Lifeform {
 
     public String name;
     public Color color;
+    public Stat tech;
+    public Star startLocation;
 
 }

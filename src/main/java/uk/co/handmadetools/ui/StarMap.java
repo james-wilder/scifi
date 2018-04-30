@@ -141,6 +141,10 @@ public class StarMap extends JPanel {
 
             int radius = (int) (0.05f * (float)STAR_SIZE / Math.log(1.0f + scale));
             g.drawOval((int)x - radius + midX, (int)y - radius + midY, radius * 2, radius * 2);
+
+            if (population.canColonize(state.at)) {
+                g.drawOval((int) x - radius + midX - 1, (int) y - radius + midY - 1, radius * 2 + 2, radius * 2 + 2);
+            }
         }
     }
 

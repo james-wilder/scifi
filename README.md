@@ -7,12 +7,13 @@
 * UI: map scroll, zoom
 * event: event loop, start and end of galaxy
 * event: spawn new lifeforms
+* UI: show lifeform populations on map
 
 ## TODO
 
 * event: colonize
 * UI: event list
-* UI: show lifeforms on map
+* speed up (list of lifeform starts?)
 * time/event logic: get state at time
 * UI: draw timeline, click updates map
 * UI: event list, click moves timeline
@@ -21,11 +22,7 @@
 * make sure names are unique
 
 * same repeatable random seed every time
-* logarithmic population
 * send fleet
-* display
-* make it a game
-* draw 3d map, UI
 * planets, moons, habitats
 * hiding from detection
 * reactions to contact:
@@ -35,14 +32,12 @@
   * relations between races/trade/tech sharing
   * sci-fi things: mind control, invasion, destruction, slavery, manipulation
 * escape the universe's destruction
-* other stats
-  * aggression
 * fleets, ships, tactics (send self-replicating war machine to nearby moon?)
 * leave/discover artifact/weapon/device in other/your system
-* current status report:
+* current status report and graphs:
   * population, tech level (with examples)
 * breakup of empire into two
-
+* epic space battles
 
 * make it a game
   * what makes a game?

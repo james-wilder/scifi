@@ -35,6 +35,34 @@ public class EventGenerator {
             }
         }
 
+        for (Star star : galaxy.stars) {
+            List<Population> populations = state.getPopulations(star);
+            if (populations.size() > 0) {
+                continue;
+            }
+
+            for (Population population : state.populations) {
+                float reachOneBillionAt = population.size.reachLevelAt(10.0f);
+
+                float d = galaxy.getDistance(population.location, star)
+                    + 0.01f * galaxy.getDistance(population.lifeform.startLocation, star);
+
+                float techLevelRequired = 10.0f + d * 100.0f;
+
+                float willColonizeAt = Math.max(population.lifeform.tech.reachLevelAt(techLevelRequired), reachOneBillionAt)
+                        + d * 100.0f;
+
+                if (willColonizeAt < event.at) {
+                    Event evolveEvent = new Event();
+                    evolveEvent.type = EventType.Colonization;
+                    evolveEvent.at = willColonizeAt;
+                    evolveEvent.population = population;
+                    evolveEvent.star = star;
+                    event = evolveEvent;
+                }
+            }
+        }
+
         return event;
     }
 }
