@@ -4,6 +4,6 @@ public class Star {
 
     public float x;
     public float y;
-    public float lifeWillEvolveAt;
+    public String name;
 
 }

@@ -18,11 +18,12 @@ public class Main {
             System.out.println(nameGenerator.newName());
         }
 
-        Galaxy galaxy = new Galaxy();
+        Galaxy galaxy = new Galaxy(nameGenerator);
         Window window = new Window(galaxy);
 
         EventGenerator eventGenerator = new EventGenerator(galaxy);
 
+        System.out.println("Generating events...");
         State state = new State(galaxy);
         while (true) {
             Event event = eventGenerator.getNextEvent(state);
@@ -32,6 +33,8 @@ public class Main {
             // TODO: archive states for timeline skipping
 
             state = newState;
+
+            window.refresh(state);
 
             if (event.type == EventType.GalaxyEnd) {
                 System.out.println("That's all folks");

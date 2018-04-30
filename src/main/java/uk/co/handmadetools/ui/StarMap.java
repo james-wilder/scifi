@@ -1,6 +1,8 @@
 package uk.co.handmadetools.ui;
 
+import uk.co.handmadetools.event.State;
 import uk.co.handmadetools.universe.Galaxy;
+import uk.co.handmadetools.universe.Population;
 import uk.co.handmadetools.universe.Star;
 
 import javax.swing.JPanel;
@@ -24,12 +26,15 @@ public class StarMap extends JPanel {
     private boolean beingDragged;
     private int dragX = 0;
     private int dragY = 0;
+    private State state;
 
     public StarMap(Galaxy galaxy) {
         this.galaxy = galaxy;
 
+        System.out.println("Generating star images...");
         starImage = makeStarImage(false, true);
         glowImage = makeStarImage(true, false);
+        System.out.println("Generated star images");
 
         addMouseListener(new StarMapMouseListener(this));
         addMouseMotionListener(new StarMapMouseMotionListener(this));
@@ -40,11 +45,11 @@ public class StarMap extends JPanel {
         BufferedImage image = new BufferedImage(STAR_SIZE, STAR_SIZE, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
 
-        for (int x = 0; x < STAR_SIZE; x++) {
-            for (int y = 0; y < STAR_SIZE; y++) {
-                float mid = (STAR_SIZE - 1.0f) / 2.0f;
+        float mid = (STAR_SIZE - 1.0f) / 2.0f;
 
-                float xd = x - mid;
+        for (int x = 0; x < STAR_SIZE / 2; x++) {
+            float xd = x - mid;
+            for (int y = 0; y < STAR_SIZE / 2; y++) {
                 float yd = y - mid;
 
                 float d2 = xd * xd + yd * yd;
@@ -73,6 +78,9 @@ public class StarMap extends JPanel {
                 g.setColor(new Color(200, 100 + colorChange, colorChange, opacity));
 
                 g.drawRect(x, y, 1, 1);
+                g.drawRect(STAR_SIZE - 1 - x, y, 1, 1);
+                g.drawRect(x, STAR_SIZE - 1 - y, 1, 1);
+                g.drawRect(STAR_SIZE - 1 - x, STAR_SIZE - 1 - y, 1, 1);
             }
         }
 
@@ -111,6 +119,28 @@ public class StarMap extends JPanel {
             y = y / scale;
 
             g.drawImage(scaled, (int)x - halfSize + midX, (int)y -halfSize + midY, size, size, this);
+        }
+
+        if (state == null) {
+            return;
+        }
+
+        for (Population population : state.populations) {
+            Star star = population.location;
+
+            float x = star.x;
+            float y = star.y;
+
+            x = x - centerX;
+            y = y - centerY;
+
+            x = x / scale;
+            y = y / scale;
+
+            g.setColor(population.lifeform.color);
+
+            int radius = (int) (0.05f * (float)STAR_SIZE / Math.log(1.0f + scale));
+            g.drawOval((int)x - radius + midX, (int)y - radius + midY, radius * 2, radius * 2);
         }
     }
 
@@ -164,5 +194,10 @@ public class StarMap extends JPanel {
     public void click(int x, int y) {
         dragX = x;
         dragY = y;
+    }
+
+    public void refresh(State state) {
+        this.state = state;
+        doRedraw();
     }
 }

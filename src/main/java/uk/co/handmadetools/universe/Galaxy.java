@@ -1,7 +1,13 @@
 package uk.co.handmadetools.universe;
 
+import uk.co.handmadetools.names.NameGenerator;
+import uk.co.handmadetools.util.Pair;
+
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class Galaxy {
@@ -15,9 +21,16 @@ public class Galaxy {
     public static final float MIN_DISTANCE_CHANGE = 0.0f;
     public static final float MAX_DISTANCE = 50000.0f;
 
-    public List<Star> stars = new ArrayList<>();
+    private NameGenerator nameGenerator;
 
-    public Galaxy() {
+    public List<Star> stars = new ArrayList<>();
+    public Map<Star, Float> lifeformEvolvesAt = new HashMap<>();
+    public Map<Pair<Star, Float>, String> lifeformNames = new HashMap<>();
+    public Map<String, Color> lifeformColors = new HashMap<>();
+
+    public Galaxy(NameGenerator nameGenerator) {
+        this.nameGenerator = nameGenerator;
+
         float d = 0;
         while (stars.size() < STAR_COUNT) {
             int arm = random.nextInt(ARM_COUNT + ARM_COUNT);
@@ -71,10 +84,13 @@ public class Galaxy {
             Star star = new Star();
             star.x = x;
             star.y = y;
-            star.lifeWillEvolveAt = 0;
-            while (star.lifeWillEvolveAt <= 0) {
-                star.lifeWillEvolveAt = (float) (random.nextGaussian() * 1000000000.0f + 10000000000.0f);
+            star.name = "star_" + stars.size();
+
+            float lifeWillEvolveAt = 0;
+            while (lifeWillEvolveAt <= 0) {
+                lifeWillEvolveAt = (float) (random.nextGaussian() * 1000000000.0f + 10000000000.0f);
             }
+            lifeformEvolvesAt.put(star, lifeWillEvolveAt);
 
             stars.add(star);
         }
@@ -86,4 +102,30 @@ public class Galaxy {
         return (float) Math.sqrt(xd * xd + yd * yd);
     }
 
+    public String getName(Pair<Star, Float> lifeformStart) {
+        if (lifeformNames.containsKey(lifeformStart)) {
+            return lifeformNames.get(lifeformStart);
+        }
+        String name = nameGenerator.newName();
+        lifeformNames.put(lifeformStart, name);
+        return name;
+    }
+
+    public Color pickColor(String name) {
+        if (lifeformColors.containsKey(name)) {
+            return lifeformColors.get(name);
+        }
+        // TODO: make colors fairly unique
+        int r = random.nextInt(255);
+        int g = random.nextInt(255);
+        int b = random.nextInt(255);
+        while ((r < 100) && (g < 100) && (b < 100)) {
+            r = random.nextInt(255);
+            g = random.nextInt(255);
+            b = random.nextInt(255);
+        }
+        Color color = new Color(r, g, b);
+        lifeformColors.put(name, color);
+        return color;
+    }
 }
