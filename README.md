@@ -3,20 +3,19 @@
 ## DONE
 * name generation
 * star positioning
-* star drawing
-* map scroll, zoom
+* UI: star drawing
+* UI: map scroll, zoom
+* event: event loop, start and end of galaxy
+* event: spawn new lifeforms
 
 ## TODO
 
-* event loop, start and end of galaxy
-* event: spawn lifeforms
-* next event logic
+* event: colonize
 * UI: event list
 * UI: show lifeforms on map
 * time/event logic: get state at time
 * UI: draw timeline, click updates map
 * UI: event list, click moves timeline
-* event: colonize
 * time/event logic: population increase
 * UI: show populations on timeline
 * make sure names are unique
@@ -43,7 +42,6 @@
 * current status report:
   * population, tech level (with examples)
 * breakup of empire into two
-
 
 
 * make it a game

@@ -45,7 +45,7 @@ public class State {
             population.size = 1;
             newState.populations.add(population);
 
-            System.out.println(FormatAt.format(event.at) + " New lifeform " + lifeform.name + " evolves at " + event.star.name + " (" + lifeforms.size() + " lifeforms)");
+            System.out.println(FormatAt.format(event.at) + " New lifeform " + lifeform.name + " evolves at " + event.star.name + " (" + newState.lifeforms.size() + " lifeforms)");
         }
 
         // TODO: create new state
