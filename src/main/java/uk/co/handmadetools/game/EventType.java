@@ -1,0 +1,15 @@
+package uk.co.handmadetools.game;
+
+public enum EventType {
+
+    CHOSE_CREATOR,
+
+    WARNING_ENVIRONMENTAL,
+    WARNING_SELF_DESTRUCTION,
+
+    GAME_OVER_ENVIRONMENTAL,
+    GAME_OVER_SELF_DESTRUCTION,
+
+    GAME_OVER_GALAXY_ENDS
+
+}

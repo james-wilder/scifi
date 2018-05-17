@@ -1,42 +1,67 @@
 package uk.co.handmadetools;
 
-import uk.co.handmadetools.event.Event;
-import uk.co.handmadetools.event.EventGenerator;
-import uk.co.handmadetools.event.EventType;
-import uk.co.handmadetools.event.State;
-import uk.co.handmadetools.names.NameGenerator;
-import uk.co.handmadetools.ui.Window;
-import uk.co.handmadetools.universe.Galaxy;
+import uk.co.handmadetools.game.Event;
+import uk.co.handmadetools.game.EventGenerator;
+import uk.co.handmadetools.game.Game;
+import uk.co.handmadetools.game.Option;
+import uk.co.handmadetools.game.Stat;
+import uk.co.handmadetools.game.State;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) {
-        System.out.println("Hello worlds");
+    public static final String OPTION_KEYS = "1234567890abcdefghijklmnopqrstuvwxyz";
 
-        NameGenerator nameGenerator = new NameGenerator();
-        Galaxy galaxy = new Galaxy(nameGenerator);
-        Window window = new Window(galaxy);
+    public static void main (String args[]) throws IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-        EventGenerator eventGenerator = new EventGenerator(galaxy);
+        Game game = new Game();
 
-        System.out.println("Generating events...");
-        State state = new State(galaxy);
-        while (true) {
-            Event event = eventGenerator.getNextEvent(state);
+        EventGenerator eventGenerator = new EventGenerator();
 
-            State newState = state.update(event);
+        State state = new State();
+        state.selfDestruction = new Stat(0, 0, 1);
+        state.environmentalDestruction = new Stat(0, 0, 1);
 
-            // TODO: archive states for timeline skipping
+        Event event = eventGenerator.nextEvent(game, state);
+        System.out.println("Event: " + event.eventType.name());
 
-            state = newState;
+        while (!state.gameOver) {
+            List<Option> options = event.getOptions();
 
-            window.refresh(state);
+            showStatus(state, event);
+            for (int i = 0; i < options.size(); i++) {
+                System.out.println(OPTION_KEYS.substring(i, i + 1) + " - " + options.get(i).text);
+            }
 
-            if (event.type == EventType.GalaxyEnd) {
-                System.out.println("That's all folks");
-                break;
+            String option = chooseOption(in).toLowerCase();
+            int chosenIndex = OPTION_KEYS.indexOf(option);
+            System.out.println(chosenIndex);
+            if (chosenIndex >= 0 && chosenIndex < options.size()) {
+                System.out.println(option);
+
+                Option chosenOption = options.get(chosenIndex);
+
+                state = state.update(event, chosenOption);
+
+                event = eventGenerator.nextEvent(game, state);
+                System.out.println("Event: " + event.eventType.name());
             }
         }
+    }
+
+    private static void showStatus(State state, Event event) {
+        System.out.println("Creator: " + (state.creator == null ? "none" : state.creator.name));
+        System.out.println("Environmental damage: " + state.environmentalDestruction.getValueAt(event.at).value);
+        System.out.println("Global destruction danger: " + state.selfDestruction.getValueAt(event.at).value);
+    }
+
+    private static String chooseOption(BufferedReader in) throws IOException {
+        return in.readLine();
     }
 
 }
