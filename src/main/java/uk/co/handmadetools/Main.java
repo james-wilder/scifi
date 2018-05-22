@@ -27,34 +27,37 @@ public class Main {
         state.selfDestruction = new Stat(0, 0, 1);
         state.environmentalDestruction = new Stat(0, 0, 1);
 
-        Event event = eventGenerator.nextEvent(game, state);
-        System.out.println("Event: " + event.eventType.name());
-
         while (!state.gameOver) {
-            List<Option> options = event.getOptions();
+            List<Event> events = eventGenerator.nextEvents(game, state);
+            for (Event event : events) {
+                System.out.println("Event: " + event.eventType.name() + ", " + event.text);
 
-            showStatus(state, event);
-            for (int i = 0; i < options.size(); i++) {
-                System.out.println(OPTION_KEYS.substring(i, i + 1) + " - " + options.get(i).text);
-            }
+                List<Option> options = event.getOptions();
 
-            String option = chooseOption(in).toLowerCase();
-            int chosenIndex = OPTION_KEYS.indexOf(option);
-            System.out.println(chosenIndex);
-            if (chosenIndex >= 0 && chosenIndex < options.size()) {
-                System.out.println(option);
+                showStatus(state, event);
+                for (int i = 0; i < options.size(); i++) {
+                    System.out.println(OPTION_KEYS.substring(i, i + 1) + " - " + options.get(i).text);
+                }
+
+                String option = chooseOption(in).toLowerCase();
+                int chosenIndex = OPTION_KEYS.indexOf(option);
+                while (chosenIndex < 0 || chosenIndex >= options.size()) {
+                    option = chooseOption(in).toLowerCase();
+                    chosenIndex = OPTION_KEYS.indexOf(option);
+                }
+
+//                System.out.println(chosenIndex);
+//                System.out.println(option);
 
                 Option chosenOption = options.get(chosenIndex);
 
                 state = state.update(event, chosenOption);
-
-                event = eventGenerator.nextEvent(game, state);
-                System.out.println("Event: " + event.eventType.name());
             }
         }
     }
 
     private static void showStatus(State state, Event event) {
+        System.out.println("Year: " + event.at);
         System.out.println("Creator: " + (state.creator == null ? "none" : state.creator.name));
         System.out.println("Environmental damage: " + state.environmentalDestruction.getValueAt(event.at).value);
         System.out.println("Global destruction danger: " + state.selfDestruction.getValueAt(event.at).value);

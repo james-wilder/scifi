@@ -1,4 +1,4 @@
-package uk.co.handmadetools;
+package uk.co.handmadetools.game;
 
 public enum LifeformAttribute {
 

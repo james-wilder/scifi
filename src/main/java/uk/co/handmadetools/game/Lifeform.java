@@ -1,4 +1,4 @@
-package uk.co.handmadetools;
+package uk.co.handmadetools.game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ public class Lifeform {
 
     public String name;
     public List<LifeformAttribute> attributes = new ArrayList<>();
+    public Location origin;
 
     public String toString() {
         return name + "(" + attributes.stream().map(Enum::toString).collect(Collectors.joining(", ")) + ")";

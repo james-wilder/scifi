@@ -1,7 +1,5 @@
 package uk.co.handmadetools.game;
 
-import uk.co.handmadetools.Lifeform;
-import uk.co.handmadetools.LifeformAttribute;
 import uk.co.handmadetools.names.NameGenerator;
 
 import java.util.ArrayList;
@@ -9,6 +7,9 @@ import java.util.List;
 import java.util.Random;
 
 public class Game {
+
+    public float GALAXY_SIZE = 1000;
+    public float MIN_DIST = 10;
 
     private Random random = new Random();
 
@@ -28,8 +29,29 @@ public class Game {
             } else if (random.nextFloat() < 0.1) {
                 lifeform.attributes.add(LifeformAttribute.WARLIKE);
             }
+            Location location = new Location();
+            float minD = 0;
+            while (minD < MIN_DIST) {
+                location.x = GALAXY_SIZE * random.nextFloat();
+                location.y = GALAXY_SIZE * random.nextFloat();
+                location.z = GALAXY_SIZE * random.nextFloat();
+
+                minD = minLifeformDist(location);
+            }
+            lifeform.origin = location;
             lifeforms.add(lifeform);
         }
+    }
+
+    private float minLifeformDist(Location location) {
+        float minD = Float.MAX_VALUE;
+        for (Lifeform lifeform : lifeforms) {
+            float d = lifeform.origin.getDist(location);
+            if (d < minD) {
+                minD = d;
+            }
+        }
+        return minD;
     }
 
     public List<Lifeform> getLifeforms() {

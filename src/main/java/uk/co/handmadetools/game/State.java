@@ -1,8 +1,5 @@
 package uk.co.handmadetools.game;
 
-import uk.co.handmadetools.Lifeform;
-import uk.co.handmadetools.LifeformAttribute;
-
 public class State {
 
     public Lifeform creator;
