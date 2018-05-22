@@ -2,6 +2,8 @@ package uk.co.handmadetools.game;
 
 public enum EventType {
 
+    LIFEFORM_START,
+
     CHOSE_CREATOR,
 
     WARNING_ENVIRONMENTAL,

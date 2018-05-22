@@ -23,6 +23,7 @@ public class Game {
     private void createLifeforms() {
         for (int i = 0; i < 10; i++) {
             Lifeform lifeform = new Lifeform();
+            lifeform.startAt = random.nextFloat() * 100;
             lifeform.name = nameGenerator.newName();
             if (random.nextFloat() < 0.1) {
                 lifeform.attributes.add(LifeformAttribute.PACIFIST);
@@ -41,6 +42,8 @@ public class Game {
             lifeform.origin = location;
             lifeforms.add(lifeform);
         }
+
+        lifeforms.sort((o1, o2) -> Float.compare(o1.startAt, o2.startAt));
     }
 
     private float minLifeformDist(Location location) {

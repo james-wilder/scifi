@@ -12,6 +12,15 @@ public class Stat {
         this.changeRate = changeRate;
     }
 
+    public Stat(Stat other) {
+        if (other == null) {
+            return;
+        }
+        this.value = other.value;
+        this.at = other.at;
+        this.changeRate = other.changeRate;
+    }
+
     public Stat getValueAt(float t) {
         Stat stat = new Stat(t, value + (t - at) * changeRate, changeRate);
         return stat;

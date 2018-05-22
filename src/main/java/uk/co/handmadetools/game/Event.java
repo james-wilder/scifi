@@ -6,6 +6,8 @@ import java.util.List;
 public class Event {
 
     public String text;
+    public Lifeform lifeform;
+    public Lifeform lifeform2;
     public EventType eventType;
     public float at;
     private List<Option> options = new ArrayList<>();
